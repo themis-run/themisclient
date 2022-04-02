@@ -53,7 +53,7 @@ func (c *Client) RegisterInstanceWithHeartbeat(instance *Instance, heartbeatTime
 	return nil
 }
 
-func (c *Client) DiscoveryService(serviceName string) ([]*Instance, error) {
+func (c *Client) DiscoveryService(serviceName string) ([]Instance, error) {
 	prefix := fmt.Sprintf("%s:%s", ServiceMark, serviceName)
 
 	kvList, err := c.SearchByPrefix(prefix)
@@ -61,10 +61,10 @@ func (c *Client) DiscoveryService(serviceName string) ([]*Instance, error) {
 		return nil, err
 	}
 
-	instanceList := make([]*Instance, 0)
+	instanceList := make([]Instance, 0)
 	for _, kv := range kvList {
-		instance := &Instance{}
-		if err := json.Unmarshal(kv.Value, instance); err != nil {
+		instance := Instance{}
+		if err := json.Unmarshal(kv.Value, &instance); err != nil {
 			return nil, err
 		}
 

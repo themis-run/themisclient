@@ -191,7 +191,7 @@ func (c *Client) put(address, key string, value interface{}, ttl time.Duration) 
 			Key:        key,
 			Value:      bytes,
 			CreateTime: time.Now().UnixMilli(),
-			Ttl:        ttl.Milliseconds(),
+			Ttl:        ttl.Nanoseconds(),
 		},
 	}
 
