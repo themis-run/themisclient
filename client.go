@@ -25,7 +25,7 @@ type Client struct {
 
 	clients map[string]themis.ThemisClient
 
-	sync.Mutex
+	mu sync.Mutex
 }
 
 type Info struct {
@@ -49,6 +49,7 @@ func NewClient(config *Config) (*Client, error) {
 	}
 
 	return &Client{
+		config:   config,
 		balancer: balancer,
 		info:     info,
 	}, nil
@@ -143,6 +144,7 @@ func (c *Client) SetWithExpireTime(key string, value interface{}, ttl time.Durat
 		addr := c.balancer.Get(c.info.LeaderName, c.info.Servers, true)
 		isRetry, err = c.put(addr, key, value, ttl)
 		if err != nil {
+
 		}
 
 		if !isRetry {
@@ -154,6 +156,10 @@ func (c *Client) SetWithExpireTime(key string, value interface{}, ttl time.Durat
 }
 
 func (c *Client) newClient(address string) (themis.ThemisClient, error) {
+	if c.clients == nil {
+		c.clients = make(map[string]themis.ThemisClient)
+	}
+
 	if client, ok := c.clients[address]; ok {
 		return client, nil
 	}
@@ -164,7 +170,6 @@ func (c *Client) newClient(address string) (themis.ThemisClient, error) {
 	}
 
 	client := themis.NewThemisClient(conn)
-
 	c.clients[address] = client
 
 	return client, nil
@@ -221,8 +226,8 @@ func (c *Client) delete(address, key string) (bool, error) {
 }
 
 func (c *Client) updateInfo(header *themis.Header) {
-	c.Lock()
-	defer c.Unlock()
+	c.mu.Lock()
+	defer c.mu.Unlock()
 
 	if header.Term > c.info.Term {
 		c.info.LeaderName = header.LeaderName
