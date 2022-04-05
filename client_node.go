@@ -49,3 +49,21 @@ func (c *Client) NodeInfo(name string) (NodeInfo, error) {
 		LogIndex:    resp.LogIndex,
 	}, nil
 }
+
+func (c *Client) SearchKVListFromNodeName(name string) ([]*themis.KV, error) {
+	addr, ok := c.info.Servers[name]
+	if !ok {
+		return nil, ErrorNodeNotFound
+	}
+
+	tclient, err := c.newClient(addr)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := tclient.SearchByPrefix(context.Background(), &themis.SearchRequest{})
+	if err != nil {
+		return nil, err
+	}
+	return resp.KvList, nil
+}
