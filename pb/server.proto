@@ -39,6 +39,20 @@ message KV {
     int64 ttl = 4;
 }
 
+message InfoRequest {
+}
+
+message InfoResponse {
+    Header header = 1;
+    string name = 2;
+    string address = 3;
+    string raft_address = 4;
+    int32 term = 5;
+    string role = 6;
+    int32 log_term = 7;
+    int32 log_index = 8;
+}
+
 message PutRequest {
     KV kv = 1;
 }
@@ -94,4 +108,5 @@ service Themis {
     rpc SearchByPrefix(SearchRequest) returns (SearchResponse);
     rpc WatchStream (WatchRequest) returns (stream WatchResponse);
     rpc Watch (WatchRequest) returns (WatchResponse);
+    rpc Info(InfoRequest) returns (InfoResponse);
 }
