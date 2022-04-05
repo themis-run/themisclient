@@ -12,6 +12,7 @@ type Instance struct {
 	IP          string
 	Port        int
 	IsHealthy   bool
+	CreateTime  time.Time
 	TTL         time.Duration
 	MetaData    []byte
 }
@@ -31,6 +32,7 @@ func (c *Client) RegisterInstanceWithIPCluster(serviceName, clusterName, ip stri
 		ServiceName: serviceName,
 		IP:          ip,
 		Port:        port,
+		CreateTime:  time.Now(),
 	}
 	return c.RegisterInstance(instance)
 }
