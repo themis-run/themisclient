@@ -229,9 +229,7 @@ func (c *Client) updateInfo(header *themis.Header) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
-	if header.Term > c.info.Term {
-		c.info.LeaderName = header.LeaderName
-		c.info.Servers = header.Servers
-		c.info.Term = header.Term
-	}
+	c.info.LeaderName = header.LeaderName
+	c.info.Servers = header.Servers
+	c.info.Term = header.Term
 }
