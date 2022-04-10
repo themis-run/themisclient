@@ -92,6 +92,10 @@ func convertInstanceKey(serviceName, clusterName, ip string) string {
 }
 
 func getInstanceHealthy(createTime, ttl int64) bool {
+	if ttl == 0 {
+		return true
+	}
+
 	expiretime := time.UnixMilli(createTime + ttl)
 	return time.Now().Before(expiretime)
 }
